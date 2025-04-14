@@ -72,9 +72,9 @@ internal fun updateAppWidget(
     views.setProgressBar(R.id.monthly_progress, 360, monthlyProgress.toInt(), false)
     
     // Set amounts
-    views.setTextViewText(R.id.daily_amount, "₹%.0f".format(today))
-    views.setTextViewText(R.id.weekly_amount, "₹%.0f".format(thisWeek))
-    views.setTextViewText(R.id.monthly_amount, "₹%.0f".format(thisMonth))
+    views.setTextViewText(R.id.daily_amount, "D ₹%.0f".format(today))
+    views.setTextViewText(R.id.weekly_amount, "W ₹%.0f".format(thisWeek))
+    views.setTextViewText(R.id.monthly_amount, "M ₹%.0f".format(thisMonth))
     
     // Add click handler for refresh
     val refreshIntent = Intent(context, SpentWidget::class.java).apply {

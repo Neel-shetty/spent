@@ -9,14 +9,13 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal"
-        android:padding="8dp"
-        android:weightSum="3">
+        android:orientation="vertical"
+        android:padding="8dp">
 
         <!-- Daily Progress -->
         <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
             android:layout_weight="1">
 
             <ProgressBar
@@ -37,18 +36,16 @@
                 android:textStyle="bold" />
 
             <TextView
+                android:id="@+id/daily_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/daily_amount"
-                android:layout_centerHorizontal="true"
-                android:text="Today"
-                android:textSize="12sp" />
+                android:visibility="gone" />
         </RelativeLayout>
 
         <!-- Weekly Progress -->
         <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
             android:layout_weight="1">
 
             <ProgressBar
@@ -69,18 +66,16 @@
                 android:textStyle="bold" />
 
             <TextView
+                android:id="@+id/weekly_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/weekly_amount"
-                android:layout_centerHorizontal="true"
-                android:text="Week"
-                android:textSize="12sp" />
+                android:visibility="gone" />
         </RelativeLayout>
 
         <!-- Monthly Progress -->
         <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
             android:layout_weight="1">
 
             <ProgressBar
@@ -101,12 +96,10 @@
                 android:textStyle="bold" />
 
             <TextView
+                android:id="@+id/monthly_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/monthly_amount"
-                android:layout_centerHorizontal="true"
-                android:text="Month"
-                android:textSize="12sp" />
+                android:visibility="gone" />
         </RelativeLayout>
     </LinearLayout>
 </RelativeLayout>
