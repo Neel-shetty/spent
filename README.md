@@ -1,6 +1,8 @@
-<img src="app/src/main/res/ic_launcher-web.png" width="100" height="100" style="display: block; margin: auto;">
+<div align="center">
+<img src="app/src/main/res/ic_launcher-web.png" width="100" height="100">
 
 # Spent
+</div>
 
 A finance app with three numbers:
 
@@ -8,11 +10,14 @@ A finance app with three numbers:
 - what you spent this week
 - what you spent this month
 
+<div align="center">
+
 ## Screenshot
 <img src="images/app.jpg" width="300">
 
 ## Widget
 <img src="images/widget.jpg" width="300">
+</div>
 
 ## Download
 Get the latest version from [releases](https://github.com/Neel-shetty/spent/releases)
