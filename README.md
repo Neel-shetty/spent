@@ -1,3 +1,5 @@
+<img src="app/src/main/res/ic_launcher-web.png" width="100" height="100" style="display: block; margin: auto;">
+
 # Spent
 
 A finance app with three numbers:
