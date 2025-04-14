@@ -30,9 +30,20 @@ class SpentWidget : AppWidgetProvider() {
     override fun onReceive(context: Context, intent: Intent) {
         super.onReceive(context, intent)
         if (intent.action == REFRESH_ACTION) {
-            val appWidgetManager = AppWidgetManager.getInstance(context)
-            val appWidgetIds = appWidgetManager.getAppWidgetIds(intent.component)
-            onUpdate(context, appWidgetManager, appWidgetIds)
+            val currentTime = System.currentTimeMillis()
+            if (currentTime - lastTapTime < DOUBLE_TAP_TIMEOUT) {
+                // Double tap detected, launch MainActivity
+                val launchIntent = Intent(context, MainActivity::class.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                }
+                context.startActivity(launchIntent)
+            } else {
+                // Single tap, update widget
+                val appWidgetManager = AppWidgetManager.getInstance(context)
+                val appWidgetIds = appWidgetManager.getAppWidgetIds(intent.component)
+                onUpdate(context, appWidgetManager, appWidgetIds)
+            }
+            lastTapTime = currentTime
         }
     }
 
@@ -46,6 +57,8 @@ class SpentWidget : AppWidgetProvider() {
 
     companion object {
         const val REFRESH_ACTION = "com.neel.spent.REFRESH_WIDGET"
+        private var lastTapTime = 0L
+        private const val DOUBLE_TAP_TIMEOUT = 500L // 500ms timeout for double tap
     }
 }
 
