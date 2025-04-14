@@ -76,6 +76,11 @@ internal fun updateAppWidget(
     views.setTextViewText(R.id.weekly_amount, "W ₹%.0f".format(thisWeek))
     views.setTextViewText(R.id.monthly_amount, "M ₹%.0f".format(thisMonth))
     
+    // Set text sizes (in sp units)
+    views.setFloat(R.id.daily_amount, "setTextSize", 28f)
+    views.setFloat(R.id.weekly_amount, "setTextSize", 28f)
+    views.setFloat(R.id.monthly_amount, "setTextSize", 28f)
+    
     // Add click handler for refresh
     val refreshIntent = Intent(context, SpentWidget::class.java).apply {
         action = SpentWidget.REFRESH_ACTION
