@@ -11,10 +11,14 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
 import com.neel.spent.databinding.FragmentFirstBinding
+import java.text.SimpleDateFormat
+import java.util.*
 
-/**
- * A simple [Fragment] subclass as the default destination in the navigation.
- */
+data class Transaction(
+    val amount: Double,
+    val date: Date
+)
+
 class FirstFragment : Fragment() {
 
     private var _binding: FragmentFirstBinding? = null
@@ -55,20 +59,74 @@ class FirstFragment : Fragment() {
             "date DESC"
         )
 
-        val messages = StringBuilder()
+        val transactions = mutableListOf<Transaction>()
+        val amountRegex = Regex("Rs\\s+(\\d+\\.?\\d*)\\s+debited")
+        val dateFormat = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault())
+
         cursor?.use { 
-            if (it.count == 0) {
-                messages.append("No messages containing 'debited' found.")
-            } else {
-                while (it.moveToNext()) {
-                    val body = it.getString(0)
-                    val address = it.getString(1)
-                    messages.append("From: $address\n$body\n\n")
+            while (it.moveToNext()) {
+                val body = it.getString(0)
+                amountRegex.find(body)?.let { match ->
+                    val amount = match.groupValues[1].toDouble()
+                    val dateStr = body.substringAfter("on ").substringBefore(" to")
+                    val date = dateFormat.parse(dateStr) ?: Date()
+                    transactions.add(Transaction(amount, date))
                 }
             }
         }
 
-        binding.textviewFirst.text = messages.toString()
+        val now = Calendar.getInstance()
+        val monthName = SimpleDateFormat("MMMM yyyy", Locale.getDefault()).format(now.time)
+        val today = getTodaySpending(transactions)
+        val thisWeek = getWeekSpending(transactions)
+        val thisMonth = getMonthSpending(transactions)
+
+        val summary = """
+            ${monthName.uppercase()}
+            
+            
+            Today
+            ₹%.2f
+            
+            This Week
+            ₹%.2f
+            
+            This Month
+            ₹%.2f
+        """.trimIndent().format(today, thisWeek, thisMonth)
+
+        binding.textviewFirst.text = summary
+    }
+
+    private fun getTodaySpending(transactions: List<Transaction>): Double {
+        val cal = Calendar.getInstance()
+        return transactions.filter { transaction ->
+            val txnCal = Calendar.getInstance().apply { time = transaction.date }
+            cal.get(Calendar.YEAR) == txnCal.get(Calendar.YEAR) &&
+            cal.get(Calendar.DAY_OF_YEAR) == txnCal.get(Calendar.DAY_OF_YEAR)
+        }.sumOf { it.amount }
+    }
+
+    private fun getWeekSpending(transactions: List<Transaction>): Double {
+        val cal = Calendar.getInstance()
+        return transactions.filter { transaction ->
+            val txnCal = Calendar.getInstance().apply { time = transaction.date }
+            cal.get(Calendar.YEAR) == txnCal.get(Calendar.YEAR) &&
+            cal.get(Calendar.WEEK_OF_YEAR) == txnCal.get(Calendar.WEEK_OF_YEAR)
+        }.sumOf { it.amount }
+    }
+
+    private fun getMonthSpending(transactions: List<Transaction>): Double {
+        val cal = Calendar.getInstance()
+        cal.set(Calendar.DAY_OF_MONTH, 1) // Set to first day of month
+        cal.set(Calendar.HOUR_OF_DAY, 0)
+        cal.set(Calendar.MINUTE, 0)
+        cal.set(Calendar.SECOND, 0)
+        val startOfMonth = cal.time
+
+        return transactions.filter { transaction ->
+            transaction.date >= startOfMonth
+        }.sumOf { it.amount }
     }
 
     override fun onDestroyView() {
