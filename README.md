@@ -4,7 +4,7 @@
 # Spent
 </div>
 
-A finance app with three numbers:
+**A finance app with three numbers:**
 
 - what you spent today
 - what you spent this week
