@@ -88,7 +88,8 @@ class FirstFragment : Fragment() {
         """.trimIndent().format(today, thisWeek, thisMonth)
 
         binding.textviewFirst.apply {
-            textSize = 32f  // Increase base text size
+            textSize = 70f  // Increase text size for better readability
+            setTextIsSelectable(true)
             text = summary
         }
     }
