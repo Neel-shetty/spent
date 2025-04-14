@@ -40,10 +40,6 @@ class FirstFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.buttonFirst.setOnClickListener {
-            findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
-        }
-
         if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.READ_SMS) 
             == PackageManager.PERMISSION_GRANTED) {
             readSMS()
@@ -76,15 +72,11 @@ class FirstFragment : Fragment() {
         }
 
         val now = Calendar.getInstance()
-        val monthName = SimpleDateFormat("MMMM yyyy", Locale.getDefault()).format(now.time)
         val today = getTodaySpending(transactions)
         val thisWeek = getWeekSpending(transactions)
         val thisMonth = getMonthSpending(transactions)
 
         val summary = """
-            ${monthName.uppercase()}
-            
-            
             Today
             ₹%.2f
             
