@@ -95,7 +95,10 @@ class FirstFragment : Fragment() {
             ₹%.2f
         """.trimIndent().format(today, thisWeek, thisMonth)
 
-        binding.textviewFirst.text = summary
+        binding.textviewFirst.apply {
+            textSize = 32f  // Increase base text size
+            text = summary
+        }
     }
 
     private fun getTodaySpending(transactions: List<Transaction>): Double {
