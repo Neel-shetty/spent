@@ -2,18 +2,17 @@ package com.neel.spent
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import android.widget.TextView
-import android.view.Gravity
+import androidx.fragment.app.commit
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        
-        val textView = TextView(this).apply {
-            text = "Hello World!"
-            gravity = Gravity.CENTER
-            textSize = 24f
+        setContentView(R.layout.activity_main)
+
+        if (savedInstanceState == null) {
+            supportFragmentManager.commit {
+                replace(R.id.fragment_container, FirstFragment())
+            }
         }
-        setContentView(textView)
     }
 }
