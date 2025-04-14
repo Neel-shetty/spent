@@ -1,0 +1,56 @@
+*.iml
+.gradle
+/local.properties
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+
+# .gitignore
+
+## Android Studio
+*.iml
+*.log
+*.tmp
+*.zip
+.idea
+.idea/*
+!.idea/settings.xml
+!.idea/directories.xml
+!.idea/encodings.xml
+
+## Gradle
+build
+build/*
+!.gradle/wrapper/gradle-wrapper.jar
+gradle
+gradle/*
+!.gradle/wrapper/gradle-wrapper.properties
+
+## Kotlin
+*.kt.bak
+*.kts.bak
+
+## Android
+*.apk
+*.apks
+*.dex
+*.class
+*.hprof
+
+## Other
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+## Local configuration
+local.properties
