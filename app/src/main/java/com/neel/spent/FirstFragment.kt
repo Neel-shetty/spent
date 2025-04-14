@@ -1,23 +1,20 @@
 package com.neel.spent
 
+import android.Manifest
 import android.content.pm.PackageManager
 import android.database.Cursor
 import android.net.Uri
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.navigation.fragment.findNavController
+import androidx.fragment.app.Fragment
 import com.neel.spent.databinding.FragmentFirstBinding
+import com.neel.spent.data.Transaction
 import java.text.SimpleDateFormat
 import java.util.*
-
-data class Transaction(
-    val amount: Double,
-    val date: Date
-)
 
 class FirstFragment : Fragment() {
 
