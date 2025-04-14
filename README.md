@@ -6,13 +6,11 @@ A finance app with three numbers:
 - what you spent this week
 - what you spent this month
 
-## Features
+## Screenshot
+<img src="images/app.jpg" width="300">
 
-Screenshot
-![App](images/app.jpg)
-
-Widget
-![Widget](images/widget.jpg)
+## Widget
+<img src="images/widget.jpg" width="300">
 
 ## Download
 Get the latest version from [releases](https://github.com/Neel-shetty/spent/releases)
