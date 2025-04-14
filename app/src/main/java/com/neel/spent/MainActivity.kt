@@ -34,12 +34,6 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
 
         requestSmsPermission()
-
-        binding.fab.setOnClickListener { view ->
-            Snackbar.make(view, "Hehe boi", Snackbar.LENGTH_LONG)
-                .setAction("Action", null)
-                .setAnchorView(R.id.fab).show()
-        }
     }
 
     private fun requestSmsPermission() {
