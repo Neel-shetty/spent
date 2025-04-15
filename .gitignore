@@ -28,12 +28,16 @@ local.properties
 !.idea/encodings.xml
 
 ## Gradle
-build
-build/*
-!.gradle/wrapper/gradle-wrapper.jar
-gradle
-gradle/*
-!.gradle/wrapper/gradle-wrapper.properties
+.gradle
+build/
+
+# Keep gradle wrapper files
+!gradle/
+!gradle/wrapper/
+!gradle/wrapper/gradle-wrapper.jar
+!gradle/wrapper/gradle-wrapper.properties
+!gradlew
+!gradlew.bat
 
 ## Kotlin
 *.kt.bak
