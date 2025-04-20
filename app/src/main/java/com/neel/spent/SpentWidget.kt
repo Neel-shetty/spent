@@ -5,12 +5,9 @@ import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
-import android.database.Cursor
-import android.net.Uri
 import android.widget.RemoteViews
-import java.text.SimpleDateFormat
-import java.util.*
-import com.neel.spent.data.Transaction
+import com.neel.spent.utils.SpendingCalculator
+import com.neel.spent.utils.SmsReader
 
 /**
  * Implementation of App Widget functionality.
@@ -67,13 +64,12 @@ internal fun updateAppWidget(
     appWidgetManager: AppWidgetManager,
     appWidgetId: Int
 ) {
-    val transactions = readSMS(context)
-    val today = getTodaySpending(transactions)
-    val thisWeek = getWeekSpending(transactions)
-    val thisMonth = getMonthSpending(transactions)
+    val transactions = SmsReader.readTransactions(context)
+    val today = SpendingCalculator.getTodaySpending(transactions)
+    val thisWeek = SpendingCalculator.getWeekSpending(transactions)
+    val thisMonth = SpendingCalculator.getMonthSpending(transactions)
 
-    // Calculate progress percentages (assuming daily budget of 1000, weekly 5000, monthly 20000)
-    val dailyProgress = (today / 1000.0 * 360).coerceIn(0.0, 360.0)  // Convert to degrees
+    val dailyProgress = (today / 1000.0 * 360).coerceIn(0.0, 360.0)
     val weeklyProgress = (thisWeek / 5000.0 * 360).coerceIn(0.0, 360.0)
     val monthlyProgress = (thisMonth / 20000.0 * 360).coerceIn(0.0, 360.0)
 
@@ -84,17 +80,14 @@ internal fun updateAppWidget(
     views.setProgressBar(R.id.weekly_progress, 360, weeklyProgress.toInt(), false)
     views.setProgressBar(R.id.monthly_progress, 360, monthlyProgress.toInt(), false)
     
-    // Set amounts
     views.setTextViewText(R.id.daily_amount, "D ₹%.0f".format(today))
     views.setTextViewText(R.id.weekly_amount, "W ₹%.0f".format(thisWeek))
     views.setTextViewText(R.id.monthly_amount, "M ₹%.0f".format(thisMonth))
     
-    // Set text sizes (in sp units)
     views.setFloat(R.id.daily_amount, "setTextSize", 28f)
     views.setFloat(R.id.weekly_amount, "setTextSize", 28f)
     views.setFloat(R.id.monthly_amount, "setTextSize", 28f)
     
-    // Add click handler for refresh
     val refreshIntent = Intent(context, SpentWidget::class.java).apply {
         action = SpentWidget.REFRESH_ACTION
     }
@@ -105,62 +98,4 @@ internal fun updateAppWidget(
     views.setOnClickPendingIntent(R.id.widget_container, refreshPendingIntent)
     
     appWidgetManager.updateAppWidget(appWidgetId, views)
-}
-
-private fun readSMS(context: Context): List<Transaction> {
-    val cursor: Cursor? = context.contentResolver.query(
-        Uri.parse("content://sms/inbox"),
-        arrayOf("body", "address", "date"),
-        "body LIKE ?",
-        arrayOf("%debited%"),
-        "date DESC"
-    )
-
-    val transactions = mutableListOf<Transaction>()
-    val amountRegex = Regex("Rs\\s+(\\d+\\.?\\d*)\\s+debited")
-    val dateFormat = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault())
-
-    cursor?.use { 
-        while (it.moveToNext()) {
-            val body = it.getString(0)
-            amountRegex.find(body)?.let { match ->
-                val amount = match.groupValues[1].toDouble()
-                val dateStr = body.substringAfter("on ").substringBefore(" to")
-                val date = dateFormat.parse(dateStr) ?: Date()
-                transactions.add(Transaction(amount, date))
-            }
-        }
-    }
-    return transactions
-}
-
-private fun getTodaySpending(transactions: List<Transaction>): Double {
-    val cal = Calendar.getInstance()
-    return transactions.filter { transaction ->
-        val txnCal = Calendar.getInstance().apply { time = transaction.date }
-        cal.get(Calendar.YEAR) == txnCal.get(Calendar.YEAR) &&
-        cal.get(Calendar.DAY_OF_YEAR) == txnCal.get(Calendar.DAY_OF_YEAR)
-    }.sumOf { it.amount }
-}
-
-private fun getWeekSpending(transactions: List<Transaction>): Double {
-    val cal = Calendar.getInstance()
-    return transactions.filter { transaction ->
-        val txnCal = Calendar.getInstance().apply { time = transaction.date }
-        cal.get(Calendar.YEAR) == txnCal.get(Calendar.YEAR) &&
-        cal.get(Calendar.WEEK_OF_YEAR) == txnCal.get(Calendar.WEEK_OF_YEAR)
-    }.sumOf { it.amount }
-}
-
-private fun getMonthSpending(transactions: List<Transaction>): Double {
-    val cal = Calendar.getInstance()
-    cal.set(Calendar.DAY_OF_MONTH, 1)
-    cal.set(Calendar.HOUR_OF_DAY, 0)
-    cal.set(Calendar.MINUTE, 0)
-    cal.set(Calendar.SECOND, 0)
-    val startOfMonth = cal.time
-
-    return transactions.filter { transaction ->
-        transaction.date >= startOfMonth
-    }.sumOf { it.amount }
 }
