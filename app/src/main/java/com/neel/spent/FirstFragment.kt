@@ -56,26 +56,56 @@ class FirstFragment : Fragment() {
         val cursor: Cursor? = requireActivity().contentResolver.query(
             Uri.parse("content://sms/inbox"),
             arrayOf("body", "address", "date"),
-            "body LIKE ?",
-            arrayOf("%debited%"),
+            "body LIKE ? OR body LIKE ? OR body LIKE ?",
+            arrayOf("%debited%", "%Sent Rs.%", "%debited by%"),
             "date DESC"
         )
 
         val transactions = mutableListOf<Transaction>()
-        val amountRegex = Regex("Rs\\s+(\\d+\\.?\\d*)\\s+debited")
-        val dateFormat = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault())
+        val federalRegex = Regex("Rs\\s+(\\d+\\.?\\d*)\\s+debited")
+        val sbiRegex = Regex("debited by (\\d+\\.?\\d*) on date (\\d{2}[A-Za-z]{3}\\d{2})")
+        val kotakRegex = Regex("Sent Rs\\.?(\\d+\\.?\\d*)[\\s\\S]*on (\\d{2}-\\d{2}-\\d{2})")
+        val federalDateFormat = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault())
+        val sbiDateFormat = SimpleDateFormat("ddMMMyy", Locale.getDefault())
+        val kotakDateFormat = SimpleDateFormat("dd-MM-yy", Locale.getDefault())
 
-        cursor?.use { 
+        var federalCount = 0
+        var sbiCount = 0
+        var kotakCount = 0
+
+        cursor?.use {
             while (it.moveToNext()) {
                 val body = it.getString(0)
-                amountRegex.find(body)?.let { match ->
+                // Federal Bank format
+                federalRegex.find(body)?.let { match ->
+                    federalCount++
                     val amount = match.groupValues[1].toDouble()
                     val dateStr = body.substringAfter("on ").substringBefore(" to")
-                    val date = dateFormat.parse(dateStr) ?: Date()
+                    val date = try { federalDateFormat.parse(dateStr) } catch (e: Exception) { null } ?: Date()
                     transactions.add(Transaction(amount, date))
+                } ?: run {
+                    // SBI format
+                    sbiRegex.find(body)?.let { match ->
+                        sbiCount++
+                        val amount = match.groupValues[1].toDouble()
+                        val dateStr = match.groupValues[2]
+                        val date = try { sbiDateFormat.parse(dateStr) } catch (e: Exception) { null } ?: Date()
+                        transactions.add(Transaction(amount, date))
+                    } ?: run {
+                        // Kotak format
+                        kotakRegex.find(body)?.let { match ->
+                            kotakCount++
+                            val amount = match.groupValues[1].toDouble()
+                            val dateStr = match.groupValues[2]
+                            val date = try { kotakDateFormat.parse(dateStr) } catch (e: Exception) { null } ?: Date()
+                            transactions.add(Transaction(amount, date))
+                        }
+                    }
                 }
             }
         }
+
+        android.util.Log.d("SMSRead", "Federal: $federalCount, SBI: $sbiCount, Kotak: $kotakCount")
 
         val now = Calendar.getInstance()
         val today = getTodaySpending(transactions)
