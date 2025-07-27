@@ -35,13 +35,7 @@ jobs:
         run: |
 #          echo $SIGNING_KEY_BASE64 | base64 --decode > release.jks
           echo $SIGNING_KEY_BASE64 | base64 --decode > app/release.jks
-
-
           ./gradlew assembleRelease
-
-        
-#      - name: Build Release APK
-#        run: ./gradlew assembleRelease
 
       - name: Rename and move APK
         run: mv ./app/build/outputs/apk/release/app-release.apk ./Spent.apk
