@@ -76,17 +76,17 @@ internal fun updateAppWidget(
     val views = RemoteViews(context.packageName, R.layout.spent_widget)
     
     // Set progress for each arc
-    views.setProgressBar(R.id.daily_progress, 360, dailyProgress.toInt(), false)
-    views.setProgressBar(R.id.weekly_progress, 360, weeklyProgress.toInt(), false)
-    views.setProgressBar(R.id.monthly_progress, 360, monthlyProgress.toInt(), false)
+//    views.setProgressBar(R.id.daily_progress, 360, dailyProgress.toInt(), false)
+//    views.setProgressBar(R.id.weekly_progress, 360, weeklyProgress.toInt(), false)
+//    views.setProgressBar(R.id.monthly_progress, 360, monthlyProgress.toInt(), false)
     
     views.setTextViewText(R.id.daily_amount, "D ₹%.0f".format(today))
     views.setTextViewText(R.id.weekly_amount, "W ₹%.0f".format(thisWeek))
     views.setTextViewText(R.id.monthly_amount, "M ₹%.0f".format(thisMonth))
     
-    views.setFloat(R.id.daily_amount, "setTextSize", 28f)
-    views.setFloat(R.id.weekly_amount, "setTextSize", 28f)
-    views.setFloat(R.id.monthly_amount, "setTextSize", 28f)
+//    views.setFloat(R.id.daily_amount, "setTextSize", 28f)
+//    views.setFloat(R.id.weekly_amount, "setTextSize", 28f)
+//    views.setFloat(R.id.monthly_amount, "setTextSize", 28f)
     
     val refreshIntent = Intent(context, SpentWidget::class.java).apply {
         action = SpentWidget.REFRESH_ACTION
