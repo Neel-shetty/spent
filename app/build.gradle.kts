@@ -12,8 +12,8 @@ android {
         applicationId = "com.neel.spent"
         minSdk = 29
         targetSdk = 36
-        versionCode = 3
-        versionName = "1.2"
+        versionCode = 4
+        versionName = "1.2.11"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
