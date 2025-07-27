@@ -14,4 +14,8 @@
     <string name="appwidget_text">Spent</string>
     <string name="add_widget">Add widget</string>
     <string name="app_widget_description">Daily, Weekly and Monthly expense tracker</string>
+    <string name="today">Today</string>
+    <string name="this_week">This Week</string>
+    <string name="this_month">This Month</string>
+    <string name="_2f">₹%.2f</string>
 </resources>

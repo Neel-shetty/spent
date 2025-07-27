@@ -48,22 +48,9 @@ class FirstFragment : Fragment() {
         val thisWeek = SpendingCalculator.getWeekSpending(transactions)
         val thisMonth = SpendingCalculator.getMonthSpending(transactions)
 
-        val summary = """
-            Today
-            ₹%.2f
-            
-            This Week
-            ₹%.2f
-            
-            This Month
-            ₹%.2f
-        """.trimIndent().format(today, thisWeek, thisMonth)
-
-        binding.textviewFirst.apply {
-            textSize = 70f
-            setTextIsSelectable(true)
-            text = summary
-        }
+        binding.todayAmount.text = getString(R.string._2f).format(today)
+        binding.weekAmount.text = getString(R.string._2f).format(thisWeek)
+        binding.monthAmount.text = getString(R.string._2f).format(thisMonth)
     }
 
     override fun onDestroyView() {
