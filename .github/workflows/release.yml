@@ -25,7 +25,7 @@ jobs:
           
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
-#
+
 #      - name: Decode Keystore & Build Signed APK
 #        env:
 #          SIGNING_KEY_BASE64: ${{ secrets.SIGNING_KEY_BASE64 }}
@@ -41,11 +41,11 @@ jobs:
       - name: Build Release APK
         run: ./gradlew assembleRelease
 
-      - name: List files in build outputs
-        run: ls -R ./app/build/outputs/
+      - name: Rename and move APK
+        run: mv ./app/build/outputs/apk/release/app-release-unsigned.apk ./Spent.apk
 
       - name: Create Release and Upload APK
         uses: softprops/action-gh-release@v2
         with:
-#          files: ./app/build/outputs/apk/release/*.apk => Spent.apk
-          files: ./app/build/outputs/apk/release/app-release-unsigned.apk => Spent.apk
+          fail_on_unmatched_files: true
+          files: Spent.apk
