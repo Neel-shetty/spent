@@ -69,17 +69,8 @@ internal fun updateAppWidget(
     val thisWeek = SpendingCalculator.getWeekSpending(transactions)
     val thisMonth = SpendingCalculator.getMonthSpending(transactions)
 
-    val dailyProgress = (today / 1000.0 * 360).coerceIn(0.0, 360.0)
-    val weeklyProgress = (thisWeek / 5000.0 * 360).coerceIn(0.0, 360.0)
-    val monthlyProgress = (thisMonth / 20000.0 * 360).coerceIn(0.0, 360.0)
-
     val views = RemoteViews(context.packageName, R.layout.spent_widget)
-    
-    // Set progress for each arc
-//    views.setProgressBar(R.id.daily_progress, 360, dailyProgress.toInt(), false)
-//    views.setProgressBar(R.id.weekly_progress, 360, weeklyProgress.toInt(), false)
-//    views.setProgressBar(R.id.monthly_progress, 360, monthlyProgress.toInt(), false)
-    
+
     views.setTextViewText(R.id.daily_amount, "D ₹%.0f".format(today))
     views.setTextViewText(R.id.weekly_amount, "W ₹%.0f".format(thisWeek))
     views.setTextViewText(R.id.monthly_amount, "M ₹%.0f".format(thisMonth))
