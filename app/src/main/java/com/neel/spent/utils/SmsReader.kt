@@ -12,8 +12,8 @@ object SmsReader {
         val cursor: Cursor? = context.contentResolver.query(
             "content://sms/inbox".toUri(),
             arrayOf("body", "address", "date"),
-            "body LIKE ? OR body LIKE ? OR body LIKE ?",
-            arrayOf("%debited%", "%Sent Rs.%", "%debited by%"),
+            "body LIKE ? OR body LIKE ? OR body LIKE ? OR body LIKE ? OR body LIKE ?",
+            arrayOf("%debited%", "%Sent Rs.%", "%debited by%", "%paid thru%", "%sent from%"),
             "date DESC"
         )
 
@@ -21,16 +21,24 @@ object SmsReader {
         var federalCount = 0
         var sbiCount = 0
         var kotakCount = 0
-        var karnatakaBankCount = 0 // Counter for Karnataka Bank
+        var karnatakaBankCount = 0
+        var canaraBankCount = 0
+        var sliceCount = 0
 
         val federalRegex = Regex("Rs\\s+(\\d+\\.?\\d*)\\s+debited")
         val sbiRegex = Regex("debited by (\\d+\\.?\\d*) on date (\\d{2}[A-Za-z]{3}\\d{2})")
         val kotakRegex = Regex("Sent Rs\\.?(\\d+\\.?\\d*)[\\s\\S]*on (\\d{2}-\\d{2}-\\d{2})")
         val karnatakaBankRegex = Regex("debited for Rs\\.(\\d+\\.\\d{2}) on (\\d{2}-\\d{2}-\\d{2})")
+        val canaraBankRegex = Regex("Rs\\.\\s*(\\d+\\.?\\d*)\\s+paid thru.*on (\\d{1,2}-\\d{1,2}-\\d{2})")
+        val sliceRegex = Regex("Rs\\.\\s*(\\d+\\.?\\d*)\\s+sent from.*on (\\d{2}-[A-Za-z]{3}-\\d{2})")
+
         val federalDateFormat = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault())
         val sbiDateFormat = SimpleDateFormat("ddMMMyy", Locale.getDefault())
         val kotakDateFormat = SimpleDateFormat("dd-MM-yy", Locale.getDefault())
         val karnatakaBankDateFormat = SimpleDateFormat("dd-MM-yy", Locale.getDefault())
+        val canaraBankDateFormat = SimpleDateFormat("dd-M-yy", Locale.getDefault())
+        val sliceDateFormat = SimpleDateFormat("dd-MMM-yy", Locale.getDefault())
+
 
         cursor?.use {
             while (it.moveToNext()) {
@@ -70,13 +78,40 @@ object SmsReader {
                                     null
                                 } ?: Date()
                                 transactions.add(Transaction(amount, date))
+                            } ?: run {
+                                // Canara Bank format
+                                canaraBankRegex.find(body)?.let { match ->
+                                    canaraBankCount++
+                                    val amount = match.groupValues[1].toDouble()
+                                    val dateStr = match.groupValues[2]
+                                    val date = try {
+                                        canaraBankDateFormat.parse(dateStr)
+                                    } catch (e: Exception) {
+                                        null
+                                    } ?: Date()
+                                    transactions.add(Transaction(amount, date))
+
+                                } ?: run {
+                                    // Slice format
+                                    sliceRegex.find(body)?.let { match ->
+                                        sliceCount++
+                                        val amount = match.groupValues[1].toDouble()
+                                        val dateStr = match.groupValues[2]
+                                        val date = try {
+                                            sliceDateFormat.parse(dateStr)
+                                        } catch (e: Exception) {
+                                            null
+                                        } ?: Date()
+                                        transactions.add(Transaction(amount, date))
+                                    }
+                                }
                             }
                         }
                     }
                 }
             }
         }
-        println("SMS Count - Federal Bank: $federalCount, SBI: $sbiCount, Kotak: $kotakCount")
+        println("SMS Count - Federal Bank: $federalCount, SBI: $sbiCount, Kotak: $kotakCount, Canara Bank: $canaraBankCount, Slice: $sliceCount")
         return transactions
     }
 }
